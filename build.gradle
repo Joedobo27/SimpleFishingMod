@@ -1,0 +1,43 @@
+apply plugin: 'java'
+group = "com.joedobo27"
+version = "1.0.0"
+sourceCompatibility = JavaVersion.VERSION_1_8
+def WUServerPath = "C:\\Users\\Jason\\Documents\\WU\\WU-Server\\"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly files("${WUServerPath}common.jar")
+    compileOnly files("${WUServerPath}server.jar")
+    compileOnly files("${WUServerPath}modlauncher.jar")
+    compileOnly files("${WUServerPath}javassist.jar")
+    compileOnly (files(WUServerPath + "mods\\jdbCommon\\jdbCommon.jar"))
+    // https://mvnrepository.com/artifact/junit/junit
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    // https://mvnrepository.com/artifact/com.intellij/annotations
+    compileOnly group: 'com.intellij', name: 'annotations', version: '12.0'
+}
+
+jar {
+    archiveName = "${project.name}.jar"
+    manifest {
+        attributes("Implementation-Version": project.version,
+                "Build-Jdk": sourceCompatibility)
+    }
+}
+
+task dist(type: Zip) {
+    into("mods", {
+        into(project.name, {
+            from jar
+        })
+    })
+    archiveName = "${project.name}-${project.version}.zip"
+    into("mods", {
+        into(project.name, {
+            from("ModResources")
+        })
+    })
+}
